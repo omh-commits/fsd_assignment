@@ -1,0 +1,24 @@
+# Render Blueprint for Leafy Village (free plan).
+# Render dashboard -> New -> Blueprint -> choose this GitHub repository.
+# Render asks for the two "sync: false" values (the Aiven database details) before the first deploy.
+
+services:
+  - type: web
+    name: leafy-village
+    runtime: node
+    plan: free
+    region: singapore
+    # Build the React app, then install the server. The server also serves the React app.
+    buildCommand: cd client && npm ci --include=dev && npm run build && cd ../server && npm ci
+    startCommand: cd server && npm start
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: NODE_ENV
+        value: production
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: DATABASE_URL
+        sync: false
+      - key: DB_CA_CERT
+        sync: false
